@@ -3,11 +3,9 @@ defmodule PLRC.Repo.Migrations.CreateTableAndPublication do
 
   def up do
     # temporary table not supported for logical replication
-    execute """
-    CREATE TABLE IF NOT EXISTS plrc_repl(
-      message TEXT
-    );
-    """
+    create table(:plrc_repl, primary_key: false) do
+      add :message, :text
+    end
 
     execute """
     CREATE PUBLICATION plrc FOR TABLE plrc_repl;
@@ -19,8 +17,6 @@ defmodule PLRC.Repo.Migrations.CreateTableAndPublication do
     DROP PUBLICATION IF EXISTS plrc;
     """
 
-    execute """
-    DROP TABLE IF EXISTS plrc_repl;
-    """
+    drop table(:plrc_repl)
   end
 end
