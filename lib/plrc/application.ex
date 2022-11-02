@@ -8,6 +8,8 @@ defmodule PLRC.Application do
   @impl true
   def start(_type, _args) do
     children = [
+      PLRC.Repo,
+      {PLRC.Repl, Application.get_env(:plrc, PLRC.Repo)}
       # Starts a worker by calling: PLRC.Worker.start_link(arg)
       # {PLRC.Worker, arg}
     ]

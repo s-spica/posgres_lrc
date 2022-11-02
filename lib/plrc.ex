@@ -1,18 +1,34 @@
 defmodule PLRC do
-  @moduledoc """
-  Documentation for `PLRC`.
-  """
+  require Logger
 
-  @doc """
-  Hello world.
+  alias PLRC.Schema
+  alias PLRC.Repo
 
-  ## Examples
+  def up do
+    # temporary table not supported for logical replication
+    Repo.query!("""
+    CREATE TABLE IF NOT EXISTS plrc_repl(
+      message TEXT
+    );
+    """)
 
-      iex> PLRC.hello()
-      :world
+    Repo.query!("""
+    CREATE PUBLICATION plrc FOR TABLE plrc_repl;
+    """)
+  end
 
-  """
-  def hello do
-    :world
+  def down do
+    Repo.query!("""
+    DROP PUBLICATION IF EXISTS plrc;
+    """)
+
+    Repo.query!("""
+    DROP TABLE IF EXISTS plrc_repl;
+    """)
+  end
+
+  def insert do
+    message = DateTime.utc_now() |> DateTime.to_iso8601()
+    Repo.insert!(%Schema{message: message})
   end
 end
