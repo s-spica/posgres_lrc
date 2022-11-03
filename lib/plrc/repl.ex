@@ -22,14 +22,13 @@ defmodule PLRC.Repl do
 
   @impl true
   def handle_connect(state) do
-    query = "CREATE_REPLICATION_SLOT plrc TEMPORARY LOGICAL pgoutput NOEXPORT_SNAPSHOT"
+    query = "CREATE_REPLICATION_SLOT plrc TEMPORARY LOGICAL wal2json"
     {:query, query, %{state | step: :create_slot}}
   end
 
   @impl true
   def handle_result(results, %{step: :create_slot} = state) when is_list(results) do
-    query =
-      "START_REPLICATION SLOT plrc LOGICAL 0/0 (proto_version '1', publication_names 'plrc')"
+    query = "START_REPLICATION SLOT plrc LOGICAL 0/0"
 
     {:stream, query, [], %{state | step: :streaming}}
   end
@@ -37,7 +36,7 @@ defmodule PLRC.Repl do
   @impl true
   # https://www.postgresql.org/docs/14/protocol-replication.html
   def handle_data(<<?w, _wal_start::64, _wal_end::64, _clock::64, rest::binary>>, state) do
-    Logger.info(PLRC.Decoder.decode(rest))
+    Logger.info(Jason.decode!(rest))
     {:noreply, state}
   end
 

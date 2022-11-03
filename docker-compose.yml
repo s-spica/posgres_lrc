@@ -1,7 +1,6 @@
 services:
   postgres:
-    image: postgres:14-alpine
-    command: ["postgres", "-c", "wal_level=logical"]
+    image: debezium/postgres:14-alpine
     environment:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
