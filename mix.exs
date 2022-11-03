@@ -24,7 +24,8 @@ defmodule PLRC.MixProject do
     [
       {:ecto, "~> 3.9"},
       {:ecto_sql, "~> 3.9"},
-      {:postgrex, ">= 0.0.0"}
+      {:postgrex, ">= 0.0.0"},
+      {:jason, "~> 1.4"}
     ]
   end
 end
